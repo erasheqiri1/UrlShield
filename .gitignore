@@ -1,0 +1,4 @@
+__pycache__/
+.venv/
+data/*
+!data/fresh_test_urls.csv

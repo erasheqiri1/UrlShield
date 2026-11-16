@@ -1,0 +1,68 @@
+{
+  "rows": [
+    {
+      "Eksperimenti": "Vetëm 19 veçoritë",
+      "Modeli": "Random Forest",
+      "F1 hold-out real": 0.851,
+      "F1 PhreshPhish-test": 0.813,
+      "P PhreshPhish-test": 0.841,
+      "R PhreshPhish-test": 0.787,
+      "Imitime sintetike të kapura": 0.992
+    },
+    {
+      "Eksperimenti": "Vetëm 19 veçoritë",
+      "Modeli": "XGBoost",
+      "F1 hold-out real": 0.864,
+      "F1 PhreshPhish-test": 0.823,
+      "P PhreshPhish-test": 0.859,
+      "R PhreshPhish-test": 0.791,
+      "Imitime sintetike të kapura": 0.996
+    },
+    {
+      "Eksperimenti": "Vetëm modeli i shkronjave",
+      "Modeli": "Modeli i shkronjave",
+      "F1 hold-out real": 0.764,
+      "F1 PhreshPhish-test": 0.841,
+      "P PhreshPhish-test": 0.869,
+      "R PhreshPhish-test": 0.815,
+      "Imitime sintetike të kapura": 0.869
+    },
+    {
+      "Eksperimenti": "19 veçoritë + shkronjat (modeli final)",
+      "Modeli": "Random Forest",
+      "F1 hold-out real": 0.913,
+      "F1 PhreshPhish-test": 0.894,
+      "P PhreshPhish-test": 0.894,
+      "R PhreshPhish-test": 0.895,
+      "Imitime sintetike të kapura": 0.996
+    },
+    {
+      "Eksperimenti": "19 veçoritë + shkronjat (modeli final)",
+      "Modeli": "XGBoost",
+      "F1 hold-out real": 0.917,
+      "F1 PhreshPhish-test": 0.901,
+      "P PhreshPhish-test": 0.905,
+      "R PhreshPhish-test": 0.897,
+      "Imitime sintetike të kapura": 0.996
+    },
+    {
+      "Eksperimenti": "Modeli final pa URL sintetike në trajnim",
+      "Modeli": "Random Forest",
+      "F1 hold-out real": 0.913,
+      "F1 PhreshPhish-test": 0.895,
+      "P PhreshPhish-test": 0.895,
+      "R PhreshPhish-test": 0.895,
+      "Imitime sintetike të kapura": 0.401
+    },
+    {
+      "Eksperimenti": "Modeli final pa URL sintetike në trajnim",
+      "Modeli": "XGBoost",
+      "F1 hold-out real": 0.908,
+      "F1 PhreshPhish-test": 0.898,
+      "P PhreshPhish-test": 0.903,
+      "R PhreshPhish-test": 0.894,
+      "Imitime sintetike të kapura": 0.575
+    }
+  ],
+  "note": "Hold-out real: 8,265 URL pa ato sintetike. PhreshPhish-test: 30,000 URL. Imitime sintetike: 252 URL të krijuara nga gjeneratori, etiketa e tyre është supozim. Të gjitha variantet trajnohen në të njëjtën ndarje sipas domenit."
+}
