@@ -65,5 +65,4 @@ if attack:
         name: st.column_config.ProgressColumn(name, min_value=0.0, max_value=1.0, format="percent")
         for name in models})
     all_box.caption("Imitimet janë krijuar nga programi, prandaj kjo provë tregon fortësinë ndaj këtyre "
-               "teknikave, jo notën e modelit në realitet. Me `@` dhe IP, faqja e vërtetë nuk është "
-               "domeni që do të hapej.")
+               "teknikave, jo notën e modelit në realitet.")
