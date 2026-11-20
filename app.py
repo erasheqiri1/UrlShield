@@ -29,16 +29,16 @@ with st.sidebar:
         .st-key-active_page a {background: #2DD4BF; border-radius: 10px;}
         .st-key-active_page a:hover {background: #2DD4BF;}
         .st-key-active_page a * {color: #081719 !important;}
-        [data-testid="stPageLink-NavLink"]:hover {background: #1C3B40;}
-        .st-key-ml_box {background: #1C3B4066; border: 1px solid #1C3B40; border-radius: 10px;
+        [data-testid="stPageLink-NavLink"]:hover {background: var(--us-edge);}
+        .st-key-ml_box {background: var(--us-soft); border: 1px solid var(--us-edge); border-radius: 10px;
                         padding: .5rem .75rem; margin-top: .4rem; cursor: default;}
-        .st-key-ml_box p {font-size: .8rem; color: #F0FDFA; white-space: nowrap; text-align: center;}
-        .st-key-ml_box [data-testid="stIconMaterial"] {color: #2DD4BF;}
+        .st-key-ml_box p {font-size: .8rem; color: var(--us-text); white-space: nowrap; text-align: center;}
+        .st-key-ml_box [data-testid="stIconMaterial"] {color: var(--us-accent);}
     </style>""")
     _, center, _ = st.columns([1, 2.7, 1])
     center.image(LOGO, use_container_width=True)
     st.html('<div style="text-align:center;font-size:1.7rem;font-weight:700;line-height:1.2">URLShield</div>'
-            '<div style="text-align:center;font-size:.76rem;color:#F0FDFA;opacity:.8;margin-top:2px">'
+            '<div style="text-align:center;font-size:.76rem;color:var(--us-text);opacity:.8;margin-top:2px">'
             'AI-Powered Phishing URL Detection</div>'
             '<div style="position:relative;height:1px;margin:10px 0 6px;'
             'background:linear-gradient(90deg,transparent,#0D9488 15%,#0D9488 85%,transparent)">'

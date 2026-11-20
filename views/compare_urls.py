@@ -3,8 +3,8 @@ import html
 import streamlit as st
 
 from src.core import available_models, load_metrics, load_model, predict, url_segments
-from src.ui import (colored_url, gauge, impact_chart, model_cards, page_header, reasons_list, reasons_of,
-                    verdict_of, votes_of)
+from src.ui import (gauge, impact_chart, model_cards, page_header, reasons_list, reasons_of, segment_notes,
+                    votes_of)
 
 cached_model = st.cache_resource(load_model)
 
@@ -43,8 +43,8 @@ if compare:
     for col, key, url in zip(st.columns(2), ("card_gauge_a", "card_gauge_b"), (url_a, url_b)):
         with col.container(key=key, height=gauge_height, border=False):
             proba = predict(model, url)
-            gauge(proba, verdict_of(proba)[0])
-            colored_url(url)
+            gauge(proba, url=url)
+            segment_notes(url)
 
     st.subheader("Vota e modeleve")
     all_models = {name: cached_model(name) for name in models}

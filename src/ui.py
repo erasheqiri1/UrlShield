@@ -9,16 +9,30 @@ import streamlit as st
 from src.core import (THRESHOLD, UNCERTAIN_HIGH, UNCERTAIN_LOW, explain, predict, reason_text,
                       url_segments)
 
-LEVEL_COLORS = {
-    "good": ("#2DD4BF", "Në rregull"),
-    "warn": ("#ca8a04", "Kujdes"),
-    "risk": ("#ea580c", "E dyshimtë"),
-    "danger": ("#dc2626", "Rrezik"),
+CSS_VARIABLES = {
+    "panel": "color-mix(in srgb, #0D9488 10%, transparent)",
+    "edge": "color-mix(in srgb, #0D9488 18%, transparent)",
+    "soft": "color-mix(in srgb, #0D9488 10%, transparent)",
+    "accent": "color-mix(in srgb, #14B8A6 75%, currentColor)",
+    "red": "color-mix(in srgb, #ef4444 75%, currentColor)",
+    "yellow": "color-mix(in srgb, #eab308 70%, currentColor)",
+    "glow": "color-mix(in srgb, #2DD4BF 35%, transparent)",
+    "text": "currentColor",
 }
-TEAL, TEAL_BRIGHT, PANEL, CARD_EDGE = "#0D9488", "#2DD4BF", "#10272B", "#1C3B40"
-CHART_COLORS = ["#0D9488", "#2DD4BF", "#99F6E4", "#F0FDFA"]
-ROC_COLORS = ["#2DD4BF", "#F0FDFA", "#0D9488", "#FACC15", "#99F6E4"]
+COLORS = {"text": "#64748B", "accent": "#14B8A6", "red": "#ef4444", "yellow": "#eab308",
+          "edge": "#94A3B866", "chart": ["#0D9488", "#2DD4BF", "#99F6E4", "#64748B"],
+          "roc": ["#2DD4BF", "#64748B", "#0D9488", "#EAB308", "#5EEAD4"]}
+TEAL = "#0D9488"
+PANEL, CARD_EDGE, ACCENT = "var(--us-panel)", "var(--us-edge)", "var(--us-accent)"
 PHISHING_COLOR, LEGIT_COLOR, UNCERTAIN_COLOR = "#dc2626", TEAL, "#ca8a04"
+
+
+def palette() -> dict:
+    return COLORS
+
+
+def level_color(level: str):
+    return {"good": palette()["accent"], "warn": "#ca8a04", "risk": "#ea580c", "danger": "#dc2626"}.get(level)
 
 
 def verdict_of(proba: float) -> tuple:
@@ -42,25 +56,27 @@ def page_header(title: str, caption: str = None):
 
 
 def global_styles():
+    variables = "".join(f"--us-{key}: {value};" for key, value in CSS_VARIABLES.items())
+    st.html(f"<style>:root {{{variables}}}</style>")
     st.html("""<style>
-        [data-testid="stMainBlockContainer"] {padding-top: 3.75rem;}   /* shiriti lart i mbulon 3.75rem */
+        [data-testid="stMainBlockContainer"] {padding-top: 3.75rem;}
         [data-testid="stAlertContainer"] {border-radius: 18px;}
         [class*="st-key-card_"], [data-testid="stExpander"] details, [data-testid="stMetric"] {
-            background: #10272B; border: 1px solid #0D9488; border-radius: 18px;}
+            background: var(--us-panel); border: 1px solid #0D9488; border-radius: 18px;}
         [class*="st-key-card_"] {padding: 1.25rem 1.5rem;}
         [data-testid="stMetric"] {padding: .85rem 1.1rem;}
-        [class*="st-key-card_"] [data-testid="stMetric"] {background: #1C3B40;}
+        [class*="st-key-card_"] [data-testid="stMetric"] {background: var(--us-edge);}
         [class*="st-key-card_"] h3 {text-align: center; padding-top: 0;}
         [data-testid="stExpander"] summary {background: transparent; border-radius: 18px;}
-        [data-testid="stExpander"] summary:hover {background: #1C3B40;}
+        [data-testid="stExpander"] summary:hover {background: var(--us-edge);}
         [data-testid="stMain"] input, [data-testid="stMain"] textarea,
         [data-testid="stMain"] [data-baseweb="select"] > div,
-        [data-testid="stFileUploaderDropzone"] {background: #1C3B40; border-radius: 12px;}
+        [data-testid="stFileUploaderDropzone"] {background: var(--us-edge); border-radius: 12px;}
         [data-testid="stMain"] button[kind="secondary"] {
-            background: #1C3B40; border: 1px solid #0D9488; border-radius: 12px;
+            background: var(--us-edge); border: 1px solid #0D9488; border-radius: 12px;
             transition: border-color .2s, box-shadow .2s;}
         [data-testid="stMain"] button[kind="secondary"]:hover {
-            border-color: #2DD4BF; box-shadow: 0 0 10px #2DD4BF55; color: #F0FDFA;}
+            border-color: var(--us-accent); box-shadow: 0 0 10px var(--us-glow); color: var(--us-text);}
         [data-testid="stMain"] button[kind="primary"] {
             background: #0D9488; border: none; border-radius: 16px; min-height: 3.1rem;
             color: #F0FDFA; transition: background .2s;}
@@ -70,19 +86,19 @@ def global_styles():
         .st-key-page_header, .st-key-hero_text {border-left: 4px solid #2DD4BF; padding-left: 1rem;}
         .st-key-page_header h1, .st-key-hero_text h1 {padding-top: 0;}
         .st-key-hero_text {margin-top: .75rem;}
-        .st-key-hero_text .hero_accent {color: #2DD4BF;}
+        .st-key-hero_text .hero_accent {color: var(--us-accent);}
     </style>""")
 
 
 def results_table(table: pd.DataFrame, max_height: int = 440):
-    bright = {PHISHING_COLOR: "#f87171", UNCERTAIN_COLOR: "#facc15", LEGIT_COLOR: TEAL_BRIGHT}
+    bright = {PHISHING_COLOR: "var(--us-red)", UNCERTAIN_COLOR: "var(--us-yellow)", LEGIT_COLOR: ACCENT}
     head = "".join(f'<th style="text-align:left;padding:10px 12px;font-weight:500;position:sticky;top:0;'
                    f'background:{CARD_EDGE}">{html.escape(col)}</th>' for col in table.columns)
     rows = []
     for record in table.to_dict("records"):
         cells = []
         for col, value in record.items():
-            if col == "Probabiliteti":
+            if col == "Probabiliteti për phishing":
                 color = bright[verdict_of(value)[1]]
                 cells.append(f'<td style="padding:9px 12px;min-width:170px"><div style="display:flex;align-items:center;gap:10px">'
                              f'<div style="flex:1;height:8px;border-radius:4px;background:{CARD_EDGE}">'
@@ -99,9 +115,9 @@ def results_table(table: pd.DataFrame, max_height: int = 440):
 
 def features_list(table: pd.DataFrame):
     head = "".join(f'<th style="text-align:left;padding:10px 12px;font-weight:500;position:sticky;top:0;'
-                   f'background:#1C3B40">{html.escape(col)}</th>' for col in table.columns)
+                   f'background:{CARD_EDGE}">{html.escape(col)}</th>' for col in table.columns)
     rows = "".join(
-        '<tr style="border-top:1px solid #1C3B40">'
+        f'<tr style="border-top:1px solid {CARD_EDGE}">'
         + "".join(f'<td style="padding:9px 12px">{html.escape(str(value))}</td>' for value in row)
         + "</tr>"
         for row in table.itertuples(index=False)
@@ -114,7 +130,8 @@ def features_list(table: pd.DataFrame):
 def result_banner(url: str, proba: float, model_name: str):
     verdict, color = verdict_of(proba)
     first, _, last = verdict.rpartition(" ")
-    bright = {LEGIT_COLOR: TEAL_BRIGHT, PHISHING_COLOR: "#f87171", UNCERTAIN_COLOR: "#facc15"}[color]
+    p = palette()
+    bright = {LEGIT_COLOR: p["accent"], PHISHING_COLOR: p["red"], UNCERTAIN_COLOR: p["yellow"]}[color]
     mark = {LEGIT_COLOR: "M8 12.5l3 3 5.5-6", PHISHING_COLOR: "M12 7.5v5.5M12 16.2v.3",
             UNCERTAIN_COLOR: "M9.8 9.3a2.3 2.3 0 1 1 3.4 2.1c-.8.5-1.2 1-1.2 1.9M12 16.2v.3"}[color]
     icon = _svg_image(f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" '
@@ -140,7 +157,7 @@ def _url_parts(url: str) -> tuple:
     parts, notes = [], []
     for seg in url_segments(url):
         text = html.escape(seg["text"])
-        color = LEVEL_COLORS.get(seg["level"], (None,))[0]
+        color = level_color(seg["level"])
         if color:
             parts.append(f'<span style="color:{color};font-weight:700;background:{color}22;'
                          f'border-radius:4px;padding:1px 2px">{text}</span>')
@@ -167,7 +184,13 @@ def colored_url(url: str):
             f'<div>{"".join(notes)}</div>')
 
 
-def gauge(proba: float, label: str):
+def segment_notes(url: str):
+    _, notes = _url_parts(url)
+    if notes:
+        st.html(f'<div style="text-align:center">{"".join(notes)}</div>')
+
+
+def gauge(proba: float, label: str = None, url: str = None):
     def point(p, radius):
         angle = math.pi * (1 - p)
         return 110 + radius * math.cos(angle), 110 - radius * math.sin(angle)
@@ -179,17 +202,22 @@ def gauge(proba: float, label: str):
                 f'stroke="{color}" stroke-width="18"/>')
 
     x, y = point(proba, 72)
-    _, color = verdict_of(proba)
-    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 135">'
+    verdict, color = verdict_of(proba)
+    name = {LEGIT_COLOR: "Legjitime", PHISHING_COLOR: "Phishing", UNCERTAIN_COLOR: "E pasigurt"}[color]
+    bright = {LEGIT_COLOR: ACCENT, PHISHING_COLOR: "var(--us-red)", UNCERTAIN_COLOR: "var(--us-yellow)"}[color]
+    svg = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 122">'
            f'{arc(0, UNCERTAIN_LOW, LEGIT_COLOR)}{arc(UNCERTAIN_LOW, UNCERTAIN_HIGH, UNCERTAIN_COLOR)}'
            f'{arc(UNCERTAIN_HIGH, 1, PHISHING_COLOR)}'
-           f'<line x1="110" y1="110" x2="{x:.1f}" y2="{y:.1f}" stroke="#F0FDFA" stroke-width="4" '
-           f'stroke-linecap="round"/><circle cx="110" cy="110" r="7" fill="#F0FDFA"/>'
-           f'<text x="110" y="133" text-anchor="middle" font-size="20" font-weight="700" '
-           f'font-family="sans-serif" fill="{color}">{proba:.0%}</text></svg>')
-    st.html(_svg_image(svg, "width:100%;max-width:300px;display:block;margin:auto") +
-            f'<div style="text-align:center;font-weight:700;color:{color};font-size:1.05rem">'
-            f'{html.escape(label)}</div>')
+           f'<line x1="110" y1="110" x2="{x:.1f}" y2="{y:.1f}" stroke="{palette()["text"]}" stroke-width="4" '
+           f'stroke-linecap="round"/><circle cx="110" cy="110" r="7" fill="{palette()["text"]}"/></svg>')
+    top = (f'<div style="text-align:center;font-family:monospace;font-size:1.1rem;font-weight:700;'
+           f'overflow-wrap:anywhere;margin-bottom:8px">{html.escape(url)}</div>') if url else ""
+    st.html(top + _svg_image(svg, "width:100%;max-width:260px;display:block;margin:auto") +
+            f'<div style="text-align:center;font-size:1rem;margin-top:8px">Probabiliteti për Phishing: '
+            f'<b style="color:{bright};font-size:1.25rem">{proba:.0%}</b></div>'
+            f'<div style="text-align:center;margin-top:10px"><span style="display:inline-block;'
+            f'padding:4px 18px;border-radius:999px;font-weight:700;color:{bright};'
+            f'background:color-mix(in srgb, {color} 18%, transparent)">Klasifikimi: {name}</span></div>')
 
 
 def model_cards(rows: list):
@@ -197,12 +225,14 @@ def model_cards(rows: list):
         phishing = proba >= THRESHOLD
         color = PHISHING_COLOR if phishing else TEAL
         vote = "Phishing" if phishing else "Legjitime"
-        bright = "#f87171" if phishing else TEAL_BRIGHT
+        bright = "var(--us-red)" if phishing else ACCENT
         col.html(f'<div style="border:1px solid {color};background:{PANEL};border-radius:14px;'
                  f'padding:12px 8px;text-align:center;height:100%">'
-                 f'<div style="font-size:.85rem;min-height:1.4em">{html.escape(name)}</div>'
-                 f'<div style="font-size:1.5rem;font-weight:700;margin:4px 0">{proba:.0%}</div>'
-                 f'<div style="color:{bright};font-weight:700">{vote}</div></div>')
+                 f'<div style="font-size:.95rem;font-weight:600;min-height:1.4em">{html.escape(name)}</div>'
+                 f'<div style="font-size:.8rem;opacity:.75;margin-top:6px">Probabiliteti për Phishing</div>'
+                 f'<div style="font-size:1.6rem;font-weight:700;margin:2px 0 6px">{proba:.0%}</div>'
+                 f'<div style="font-size:.85rem">Klasifikimi: '
+                 f'<span style="color:{bright};font-weight:700">{vote}</span></div></div>')
 
 
 def reasons_of(model, url: str, legit_reference: dict) -> list:
@@ -253,12 +283,12 @@ def impact_chart(rows: list, x_max: float = None, n_rows: int = None):
         y=alt.Y("Veçoria:N", sort=None, title=None, axis=alt.Axis(labelLimit=240, labelOverlap=False)),
         color=alt.Color("Drejtimi:N", legend=None,
                         scale=alt.Scale(domain=["Drejt phishing", "Drejt legjitime"],
-                                        range=[PHISHING_COLOR, TEAL_BRIGHT])),
+                                        range=[PHISHING_COLOR, palette()["accent"]])),
         tooltip=["Veçoria", "Ndikimi", "Drejtimi"],
     ).properties(height=36 * (n_rows or len(data)) + 80,
                  background="transparent")
     st.altair_chart(chart, use_container_width=True)
-    centered_legend([("Drejt phishing", PHISHING_COLOR), ("Drejt legjitime", TEAL_BRIGHT)])
+    centered_legend([("Drejt phishing", PHISHING_COLOR), ("Drejt legjitime", palette()["accent"])])
 
 
 def votes_of(models: dict, url: str) -> list:
@@ -283,15 +313,15 @@ def grouped_bars(table: pd.DataFrame, id_column: str, value_columns: list):
         xOffset=alt.XOffset("Masa:N", sort=value_columns),
         y=alt.Y("Vlera:Q", title=None, scale=alt.Scale(domain=[0, 1])),
         color=alt.Color("Masa:N", sort=value_columns, legend=None,
-                        scale=alt.Scale(domain=value_columns, range=CHART_COLORS[:len(value_columns)])),
+                        scale=alt.Scale(domain=value_columns, range=palette()["chart"][:len(value_columns)])),
         tooltip=[id_column, "Masa", alt.Tooltip("Vlera:Q", format=".4f")],
     ).properties(height=280, background="transparent")
     st.altair_chart(chart, use_container_width=True)
-    centered_legend(list(zip(value_columns, CHART_COLORS)))
+    centered_legend(list(zip(value_columns, palette()["chart"])))
 
 
 def importance_bars(table: pd.DataFrame):
-    chart = alt.Chart(table).mark_bar(color=TEAL_BRIGHT, cornerRadiusEnd=3).encode(
+    chart = alt.Chart(table).mark_bar(color=palette()["accent"], cornerRadiusEnd=3).encode(
         x=alt.X("Rëndësia:Q"),
         y=alt.Y("Veçoria:N", sort=None, title=None, axis=alt.Axis(labelLimit=260, labelOverlap=False)),
         tooltip=["Veçoria", alt.Tooltip("Rëndësia:Q", format=".4f")],
@@ -310,15 +340,17 @@ def confusion_heatmap(cm: dict):
         x=alt.X("Parashikimi:N", axis=alt.Axis(orient="top", labelAngle=0, labelFontSize=13)),
         y=alt.Y("E vërtetë:N", axis=alt.Axis(labelFontSize=13)),
     )
+    p = palette()
     cells = base.mark_rect(cornerRadius=6, stroke=TEAL, strokeWidth=1).encode(
         color=alt.Color("Saktë:N", legend=None,
-                        scale=alt.Scale(domain=["Saktë", "Gabim"], range=[TEAL, CARD_EDGE])),
+                        scale=alt.Scale(domain=["Saktë", "Gabim"], range=[TEAL, p["edge"]])),
         tooltip=["E vërtetë", "Parashikimi", "Numri"],
     )
-    labels = base.mark_text(fontSize=24, fontWeight="bold", color="white").encode(
-        text=alt.Text("Numri:Q", format=","))
+    labels = base.mark_text(fontSize=24, fontWeight="bold").encode(
+        text=alt.Text("Numri:Q", format=","),
+        color=alt.condition(alt.datum["Saktë"] == "Saktë", alt.value("white"), alt.value(p["text"])))
     st.altair_chart((cells + labels).properties(height=280, background="transparent"), use_container_width=True)
-    centered_legend([("Saktë", TEAL), ("Gabim", CARD_EDGE)])
+    centered_legend([("Saktë", TEAL), ("Gabim", p["edge"])])
 
 
 def roc_chart(models: dict, highlight: str):
@@ -330,10 +362,10 @@ def roc_chart(models: dict, highlight: str):
     lines = alt.Chart(pd.DataFrame(rows)).mark_line(strokeWidth=2).encode(
         x=alt.X("fpr:Q", title="Alarme të rreme (False Positive Rate)", scale=alt.Scale(domain=[0, 1])),
         y=alt.Y("tpr:Q", title="Phishing i kapur (True Positive Rate)", scale=alt.Scale(domain=[0, 1])),
-        color=alt.Color("Modeli:N", legend=None, scale=alt.Scale(domain=names, range=ROC_COLORS)),
+        color=alt.Color("Modeli:N", legend=None, scale=alt.Scale(domain=names, range=palette()["roc"])),
         tooltip=["Modeli", "fpr", "tpr"],
     )
     diagonal = alt.Chart(pd.DataFrame({"fpr": [0, 1], "tpr": [0, 1]})).mark_line(
         strokeDash=[6, 4], color="gray").encode(x="fpr:Q", y="tpr:Q")
     st.altair_chart((lines + diagonal).properties(height=400, background="transparent"), use_container_width=True)
-    centered_legend(list(zip(names, ROC_COLORS)))
+    centered_legend(list(zip(names, palette()["roc"])))

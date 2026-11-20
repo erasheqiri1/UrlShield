@@ -64,6 +64,7 @@ def _figure(url, model_name, proba, verdict, votes, reasons):
     card(MARGIN, y, width, h)
     text(MARGIN + 16, y + 18, "Vota e modeleve", 11, TEAL, "bold")
     bar_x, bar_w = MARGIN + 170, 190
+    text(bar_x + bar_w + 34, y + 18, "Probabiliteti për phishing", 8.5, MUTED, ha="right")
     for i, (name, value, vote) in enumerate(votes):
         row = y + 44 + 24 * i
         phishing = value >= THRESHOLD

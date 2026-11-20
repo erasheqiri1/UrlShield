@@ -3,7 +3,7 @@ import pandas as pd
 import streamlit as st
 
 from src.core import THRESHOLD, attack_variants, available_models, load_metrics, load_model, model_frame
-from src.ui import page_header
+from src.ui import page_header, palette
 
 cached_model = st.cache_resource(load_model)
 
@@ -37,16 +37,16 @@ if attack:
     st.subheader(f"Të kapura nga {n_variants} imitime")
     for col, name in zip(st.columns(len(models)), models):
         caught = int((table[name] >= THRESHOLD).sum())
-        col.html(f'<div style="border:1px solid #0D9488;background:#10272B;border-radius:14px;'
+        col.html(f'<div style="border:1px solid #0D9488;background:var(--us-panel);border-radius:14px;'
                  f'padding:12px 8px;text-align:center">'
                  f'<div style="font-size:.85rem;min-height:1.4em">{name}</div>'
                  f'<div style="font-size:1.5rem;font-weight:700;margin:4px 0">{caught} nga {n_variants}</div>'
-                 f'<div style="color:#2DD4BF;font-weight:700;font-size:.9rem">'
+                 f'<div style="color:var(--us-accent);font-weight:700;font-size:.9rem">'
                  f'Të shpëtuara: {n_variants - caught}</div></div>')
 
     chart_box = st.container(key="card_chart")
     chart_box.subheader("Sa imitime kapi secili model")
-    chart_box.altair_chart(alt.Chart(summary).mark_bar(color="#2DD4BF").encode(
+    chart_box.altair_chart(alt.Chart(summary).mark_bar(color=palette()["accent"]).encode(
         x=alt.X("Kapur:Q", title="Pjesa e kapur", axis=alt.Axis(format="%"), scale=alt.Scale(domain=[0, 1])),
         y=alt.Y("Modeli:N", sort=None, title=None, axis=alt.Axis(labelLimit=200, labelOverlap=False)),
         tooltip=["Modeli", alt.Tooltip("Kapur:Q", format=".0%")],
@@ -60,7 +60,7 @@ if attack:
     kinds_box.dataframe(by_kind.loc[weakest_first].reset_index(), hide_index=True, use_container_width=True)
 
     all_box = st.container(key="card_all")
-    all_box.subheader("Të gjitha imitimet")
+    all_box.subheader("Të gjitha imitimet: probabiliteti për phishing sipas modelit")
     all_box.dataframe(table, hide_index=True, use_container_width=True, column_config={
         name: st.column_config.ProgressColumn(name, min_value=0.0, max_value=1.0, format="percent")
         for name in models})

@@ -38,9 +38,9 @@ if analyze:
         st.info("Nuk u gjet asnjë link në këtë tekst.")
         st.stop()
     model = cached_model(model_name)
-    rows = [{"URL": url, "Rezultati": verdict_of(p)[0], "Probabiliteti": p}
+    rows = [{"URL": url, "Rezultati": verdict_of(p)[0], "Probabiliteti për phishing": p}
             for url in urls for p in [predict(model, url)]]
-    n_phishing = sum(r["Probabiliteti"] >= THRESHOLD for r in rows)
+    n_phishing = sum(r["Probabiliteti për phishing"] >= THRESHOLD for r in rows)
     c = st.columns(2)
     c[0].metric("Linke të gjetura", len(rows))
     c[1].metric("Duken phishing", n_phishing)

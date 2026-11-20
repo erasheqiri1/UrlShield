@@ -1,5 +1,4 @@
-[theme]
-base = "dark"
+[theme.dark]
 primaryColor = "#0D9488"
 backgroundColor = "#081719"
 secondaryBackgroundColor = "#1C3B40"
@@ -16,8 +15,31 @@ redTextColor = "#FCA5A5"
 blueBackgroundColor = "#0F3F3D"
 blueTextColor = "#99F6E4"
 
-[theme.sidebar]
+[theme.dark.sidebar]
 backgroundColor = "#10272B"
 secondaryBackgroundColor = "#1C3B40"
 textColor = "#F0FDFA"
 borderColor = "#1C3B40"
+
+[theme.light]
+primaryColor = "#0D9488"
+backgroundColor = "#F4FAF9"
+secondaryBackgroundColor = "#E1F0EE"
+textColor = "#0F2A2E"
+borderColor = "#CFE3E0"
+linkColor = "#0F766E"
+greenColor = "#0F766E"
+greenBackgroundColor = "#D7F0EB"
+greenTextColor = "#0F766E"
+yellowBackgroundColor = "#FDF3D3"
+yellowTextColor = "#854D0E"
+redBackgroundColor = "#FCE4E4"
+redTextColor = "#B91C1C"
+blueBackgroundColor = "#D7F0EB"
+blueTextColor = "#115E59"
+
+[theme.light.sidebar]
+backgroundColor = "#E6F3F1"
+secondaryBackgroundColor = "#D3E9E6"
+textColor = "#0F2A2E"
+borderColor = "#CFE3E0"

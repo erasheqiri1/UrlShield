@@ -410,7 +410,7 @@ def load_history() -> pd.DataFrame:
     with _conn() as con:
         return pd.read_sql_query(
             "SELECT created AS Data, url AS URL, result AS Rezultati, "
-            "probability AS Probabiliteti, model AS Modeli FROM scans ORDER BY id DESC", con)
+            "probability AS \"Probabiliteti për phishing\", model AS Modeli FROM scans ORDER BY id DESC", con)
 
 
 def clear_history():

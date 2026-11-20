@@ -4,7 +4,7 @@ import streamlit as st
 
 from src.core import (available_models, clear_history, load_history, load_metrics,
                       load_model, predict, read_uploaded_csv, save_scan)
-from src.ui import page_header, results_table
+from src.ui import page_header, palette, results_table
 
 page_header("Historia e skanimeve")
 
@@ -56,7 +56,7 @@ charts.altair_chart(alt.Chart(by_day).mark_bar().encode(
     x=alt.X("Dita:O", title=None, axis=alt.Axis(labelAngle=0)),
     y=alt.Y("Skanime:Q", title="Skanime", axis=alt.Axis(tickMinStep=1)),
     color=alt.Color("Rezultati:N", title=None, legend=alt.Legend(orient="bottom"),
-                    scale=alt.Scale(domain=["Phishing", "Legjitime"], range=["#dc2626", "#2DD4BF"])),
+                    scale=alt.Scale(domain=["Phishing", "Legjitime"], range=["#dc2626", palette()["accent"]])),
     tooltip=["Dita", "Rezultati", "Skanime"],
 ).properties(height=240, background="transparent"), use_container_width=True)
 
